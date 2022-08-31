@@ -5,8 +5,8 @@ Examples from the **"Section 17: Advanced Authentication"** of the course **"Nod
 Section 17 covered:
 
 - [x] Resetting Passwords
-- [ ] Implementing the Token Logic
-- [ ] Creating the Token
+- [x] Implementing the Token Logic
+- [x] Creating the Token
 - [ ] Creating the Reset Password Form
 - [ ] Adding Logic to Update the Password
 - [ ] Why we Need Authorization
