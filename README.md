@@ -12,7 +12,7 @@ Section 17 covered:
 - [x] Why we Need Authorization
 - [x] Adding Authorization
 - [x] Adding Protection to Post Actions
-- [ ] Why Editing Fails
+- [x] Why Editing Fails
 
 
 

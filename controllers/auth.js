@@ -4,7 +4,6 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 
 const User = require("../models/user");
-const { reset } = require("nodemon");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.mailtrap.io",
