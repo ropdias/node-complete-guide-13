@@ -73,21 +73,26 @@ exports.postEditProduct = (req, res, next) => {
 
   Product.findById(prodId) // findById() returns a mongoose object where we can call .save()
     .then((product) => {
+      if (product.userId !== req.user._id) {
+        return res.redirect("/");
+      }
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDesc;
       product.imageUrl = updatedImageUrl;
-      return product.save(); // if we use the save() here it will not create a new one instead it will update behind the scenes
-    })
-    .then(() => {
-      console.log("UPDATED PRODUCT!");
-      res.redirect("/admin/products");
+      return product
+        .save() // if we use the save() here it will not create a new one instead it will update behind the scenes
+        .then(() => {
+          console.log("UPDATED PRODUCT!");
+          res.redirect("/admin/products");
+        })
+        .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find({userId: req.user._id})
+  Product.find({ userId: req.user._id })
     // .select("title price -_id") // only the title and price, and explicit excluding the _id
     // .populate("userId", "name") // only the field "name" (the field _id will also be populated)
     .then((products) => {
@@ -103,9 +108,12 @@ exports.getProducts = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   // Fetch information from the product
   const prodId = req.body.productId;
-  Product.findByIdAndRemove(prodId)
-    .then(() => {
-      console.log("Deleted product and removed it from every cart !");
+  // It's not removing from every cart yet !
+  Product.deleteOne({ _id: prodId, userId: req.user._id })
+    .then((result) => {
+      if (result.deletedCount > 0) {
+        console.log("Deleted product and removed it from every cart !"); // It's not removing from every cart yet !
+      }
       res.redirect("/admin/products");
     })
     .catch((err) => console.log(err));

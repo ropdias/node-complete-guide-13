@@ -11,7 +11,7 @@ Section 17 covered:
 - [x] Adding Logic to Update the Password
 - [x] Why we Need Authorization
 - [x] Adding Authorization
-- [ ] Adding Protection to Post Actions
+- [x] Adding Protection to Post Actions
 - [ ] Why Editing Fails
 
 
