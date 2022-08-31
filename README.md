@@ -9,8 +9,8 @@ Section 17 covered:
 - [x] Creating the Token
 - [x] Creating the Reset Password Form
 - [x] Adding Logic to Update the Password
-- [ ] Why we Need Authorization
-- [ ] Adding Authorization
+- [x] Why we Need Authorization
+- [x] Adding Authorization
 - [ ] Adding Protection to Post Actions
 - [ ] Why Editing Fails
 

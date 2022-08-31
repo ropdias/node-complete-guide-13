@@ -87,7 +87,7 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find()
+  Product.find({userId: req.user._id})
     // .select("title price -_id") // only the title and price, and explicit excluding the _id
     // .populate("userId", "name") // only the field "name" (the field _id will also be populated)
     .then((products) => {
