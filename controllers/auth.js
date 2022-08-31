@@ -171,7 +171,7 @@ exports.postReset = (req, res, next) => {
         return user
           .save()
           .then((result) => {
-            res.redirect('/');
+            res.redirect("/");
             return transporter.sendMail({
               to: req.body.email,
               from: process.env.MAILTRAP_FROM,
@@ -190,4 +190,28 @@ exports.postReset = (req, res, next) => {
         console.log(err);
       });
   });
+};
+
+exports.getNewPassword = (req, res, next) => {
+  const token = req.params.token;
+  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+    .then((user) => {
+      let message = req.flash("error");
+      if (message.length > 0) {
+        message = message[0];
+      } else {
+        message = null;
+      }
+      res.render("auth/new-password", {
+        path: "/new-password",
+        pageTitle: "New Password",
+        errorMessage: message,
+        // We will include a userId in the render from the get request because
+        // we need it in the post request to update the password
+        userId: user._id.toString(), // toString() to convert from a an objectID to a real string
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
