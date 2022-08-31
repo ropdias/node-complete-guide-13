@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 
 const User = require("../models/user");
+const { reset } = require("nodemon");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.mailtrap.io",
@@ -196,6 +197,10 @@ exports.getNewPassword = (req, res, next) => {
   const token = req.params.token;
   User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
     .then((user) => {
+      if (!user) {
+        req.flash("error", "Reset Token invalid or expired.");
+        return res.redirect("/login");
+      }
       let message = req.flash("error");
       if (message.length > 0) {
         message = message[0];
@@ -209,7 +214,50 @@ exports.getNewPassword = (req, res, next) => {
         // We will include a userId in the render from the get request because
         // we need it in the post request to update the password
         userId: user._id.toString(), // toString() to convert from a an objectID to a real string
+        // We will also need the token so we can make sure we can pass the same token to the post request:
+        passwordToken: token,
       });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+exports.postNewPassword = (req, res, next) => {
+  const newPassword = req.body.password;
+  const userId = req.body.userId;
+  const passwordToken = req.body.passwordToken;
+  let resetUser;
+
+  User.findOne({
+    resetToken: passwordToken,
+    resetTokenExpiration: { $gt: Date.now() },
+    _id: userId,
+  })
+    .then((user) => {
+      if (!user) {
+        req.flash(
+          "error",
+          "Error when trying to update. Reset Token invalid or expired."
+        );
+        return res.redirect("/login");
+      }
+      // If we find a user, we will save it in a local variable to get it in the next then() after we encrypt the password again
+      resetUser = user;
+      return bcrypt
+        .hash(newPassword, 12)
+        .then((hashedPassword) => {
+          resetUser.password = hashedPassword;
+          resetUser.resetToken = undefined; // Field is not required, so we can set to undefined to not store any values in the database
+          resetUser.resetTokenExpiration = undefined; // Field is not required, so we can set to undefined to not store any values in the database
+          return resetUser.save();
+        })
+        .then((result) => {
+          res.redirect("/login");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     })
     .catch((err) => {
       console.log(err);

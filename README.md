@@ -8,7 +8,7 @@ Section 17 covered:
 - [x] Implementing the Token Logic
 - [x] Creating the Token
 - [x] Creating the Reset Password Form
-- [ ] Adding Logic to Update the Password
+- [x] Adding Logic to Update the Password
 - [ ] Why we Need Authorization
 - [ ] Adding Authorization
 - [ ] Adding Protection to Post Actions
